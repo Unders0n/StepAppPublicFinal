@@ -5,7 +5,7 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 
-//test
+//test 2
 namespace StepApp.CommonExtensions.Enums
 {
     public static class EnumExtensions
