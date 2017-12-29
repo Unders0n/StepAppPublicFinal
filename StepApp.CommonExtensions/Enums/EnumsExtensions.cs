@@ -7,6 +7,7 @@ using System.Linq;
 
 //test 5
 //test new
+//test 6
 namespace StepApp.CommonExtensions.Enums
 {
     public static class EnumExtensions
