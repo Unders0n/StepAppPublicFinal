@@ -87,6 +87,7 @@
     <Compile Include="Date\DateTimeHelper.cs" />
     <Compile Include="DbContext\CustomDbContextExtensions.cs" />
     <Compile Include="Enums\EnumsExtensions.cs" />
+    <Compile Include="Expressions\ExpressionsExtensions.cs" />
     <Compile Include="Json\JsonSerializer.cs" />
     <Compile Include="Json\SerializationHelper.cs" />
     <Compile Include="Logger\ILoggerService.cs" />

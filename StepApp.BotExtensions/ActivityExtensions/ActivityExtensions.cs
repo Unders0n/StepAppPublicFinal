@@ -10,6 +10,8 @@ namespace StepApp.BotExtensions.ActivityExtensions
 {
     public static class ActivityExtensions
     {
+
+
         /// <summary>
         /// Create blank proactive direct message from bot to user (to create dialog for example)
         /// </summary>
@@ -57,25 +59,44 @@ namespace StepApp.BotExtensions.ActivityExtensions
         /// <param name="fakeMessage"></param>
         /// <param name="dialog"></param>
         /// <returns></returns>
-        public static async Task StartConversationWithUserFromDialog(this IMessageActivity fakeMessage, IDialog<object> dialog, ResumeAfter<IMessageActivity> resumeDelegate = null)
+        public static async Task StartConversationWithUserFromDialog(this IMessageActivity fakeMessage, IDialog<object> dialog, ResumeAfter<IMessageActivity> resumeDelegate = null, object[] customParams = null)
         {
             using (var scope = DialogModule.BeginLifetimeScope(Conversation.Container, fakeMessage))
             {
+               
+
+
                 var botData = scope.Resolve<IBotData>();
+
                 await botData.LoadAsync(CancellationToken.None);
+
+                ///extra attachments
+                if (customParams != null)
+                {
+                    int i = 0;
+                    foreach (var customParam in customParams)
+                    {
+                        botData.UserData.SetValue(customParam.GetType().Name, customParam);
+                        i++;
+                        //  context.UserData.SetValue<MyModel>("AttachmentsModel", instanceOfModel);
+                    }
+                    
+                }
+
+                
 
                 //This is our dialog stack
                 var task = scope.Resolve<IDialogTask>();
 
                 //interrupt the stack. This means that we're stopping whatever conversation that is currently happening with the user
                 //Then adding this stack to run and once it's finished, we will be back to the original conversation
-
-               // var dialog = new WelcomePollDialog();
-                task.Call(dialog.Void<object, IMessageActivity>(), null);
-
                
+                // var dialog = new WelcomePollDialog();
+                 task.Call(dialog.Void<object, IMessageActivity>(), null);
+              //  task.Call(dialog, null);
 
-               await task.PollAsync(CancellationToken.None);
+
+                await task.PollAsync(CancellationToken.None);
 
                 //flush dialog stack
                 await botData.FlushAsync(CancellationToken.None);
@@ -84,17 +105,21 @@ namespace StepApp.BotExtensions.ActivityExtensions
 
         public static async Task SaveUserDataAsync(this Activity activity, string propertyName, object data)
         {
-            StateClient stateClient = activity.GetStateClient();
+           /* StateClient stateClient = activity.GetStateClient();
             BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
             userData.SetProperty(propertyName, data);
-            await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
+            await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);*/
         }
 
-        public static async Task<T> GetUserDataAsync<T>(this Activity activity, string propertyName)
+        public static async Task GetUserDataAsync<T>(this Activity activity, string propertyName)
         {
+         
+         /*  var state = Conversation.Container.Resolve<IBotDataStore<BotData>>();
+            state.LoadAsync().Result.Data
+
             StateClient stateClient = activity.GetStateClient();
             BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
-            return userData.GetProperty<T>(propertyName);
+            return userData.GetProperty<T>(propertyName);*/
         }
     }
 }

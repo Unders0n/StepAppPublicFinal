@@ -21,7 +21,7 @@ namespace StepApp.BotExtensions.DialogExtensions
         [NonSerialized]
         private ILoggerService<ILogger> _loggerService;
 
-        public ExceptionHandlerDialog(IDialog<T> dialog, bool displayException, int stackTraceLength = 500)
+        public ExceptionHandlerDialog(IDialog<T> dialog, bool displayException = true, int stackTraceLength = 500)
         {
             _dialog = dialog;
             _displayException = displayException;
@@ -82,7 +82,9 @@ namespace StepApp.BotExtensions.DialogExtensions
 
             var message = e.Message.Replace(Environment.NewLine, "  \n");
 
-            var exceptionStr = $"**{message}**  \n\n{stackTrace}";
+            var inner = e.InnerException?.Message.Replace(Environment.NewLine, "  \n");
+
+            var exceptionStr = $"**{message}**  \n\n{stackTrace} \n\nInner: {inner}";
 
             await context.PostAsync(exceptionStr).ConfigureAwait(false);
         }
